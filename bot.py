@@ -3,7 +3,7 @@ from telegram import Bot, Update
 from telegram.ext import CommandHandler, CallbackContext
 import os
 
-TOKEN = os.environ.get("TELEGRAM_TOKEN", "INSERISCI_IL_TUO_TOKEN")
+TOKEN = os.environ.get("TELEGRAM_TOKEN")
 bot = Bot(token=TOKEN)
 
 app = Flask(__name__)
