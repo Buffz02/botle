@@ -1,15 +1,14 @@
+import os
 from flask import Flask, request
 from telegram import Bot, Update
-from telegram.ext import CommandHandler, CallbackContext
-import os
 
-TOKEN = os.environ.get("TELEGRAM_TOKEN")
+TOKEN = os.environ["TELEGRAM_TOKEN"]   # così esplode se mancante
+print("TOKEN =", TOKEN)
+
 bot = Bot(token=TOKEN)
-
 app = Flask(__name__)
 
-# funzione per gestire il comando /start
-def handle_start(update: Update, context: CallbackContext):
+def handle_start(update, context):
     chat_id = update.effective_chat.id
     bot.send_message(chat_id=chat_id, text="hello world")
 
@@ -27,5 +26,3 @@ def index():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
-
-print("TOKEN =", TOKEN)
