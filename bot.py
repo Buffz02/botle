@@ -1,31 +1,29 @@
 from flask import Flask, request
 from telegram import Bot, Update
-from telegram.ext import Dispatcher, CommandHandler
+from telegram.ext import CommandHandler, CallbackContext
+import os
 
-TOKEN = "7561299513:AAHnXCVpON1Cv20v3QgP0DaxS5dCdhe6hfE"
+TOKEN = os.environ.get("TELEGRAM_TOKEN", "INSERISCI_IL_TUO_TOKEN")
 bot = Bot(token=TOKEN)
 
 app = Flask(__name__)
-dispatcher = Dispatcher(bot=bot, update_queue=None)
 
-# definisci la funzione di risposta
-def start(update, context):
-    update.message.reply_text("hello world")
+# funzione per gestire il comando /start
+def handle_start(update: Update, context: CallbackContext):
+    chat_id = update.effective_chat.id
+    bot.send_message(chat_id=chat_id, text="hello world")
 
-# collega il comando /start
-dispatcher.add_handler(CommandHandler("start", start))
-
-# endpoint del webhook
 @app.route(f"/{TOKEN}", methods=["POST"])
 def webhook():
     update = Update.de_json(request.get_json(force=True), bot)
-    dispatcher.process_update(update)
+    if update.message and update.message.text:
+        if update.message.text.startswith("/start"):
+            handle_start(update, None)
     return "OK", 200
 
-# endpoint di test
 @app.route("/", methods=["GET"])
 def index():
-    return "Bot is running!"
+    return "Bot is alive!"
 
 if __name__ == "__main__":
-    app.run(port=10000, host="0.0.0.0")
+    app.run(host="0.0.0.0", port=10000)
