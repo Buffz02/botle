@@ -1,15 +1,15 @@
- import os
-from pyrogram import Client, filters
+import os
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-app = Client(
-    "my_bot",
-    bot_token=os.environ.get("BOT_TOKEN"),
-    api_id=int(os.environ.get("API_ID")),
-    api_hash=os.environ.get("API_HASH")
-)
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("hello world")
 
-@app.on_message(filters.command("start"))
-async def start(client, message):
-    await message.reply_text("hello world")
+app = ApplicationBuilder().token(
+    os.environ.get("BOT_TOKEN")  # prendiamo token dalle variabili ambiente
+).build()
 
-app.run()
+app.add_handler(CommandHandler("start", start))
+
+app.run_polling()
+
